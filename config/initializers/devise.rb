@@ -195,6 +195,7 @@ Devise.setup do |config|
   # end
 
   config.cas_base_url = 'https://auth.bushi.do/cas'
+  config.cas_logout_url = 'https://auth.bushi.do/users/sign_out'
 
   # you can override these if you need to, but cas_base_url is usually enough
   # config.cas_login_url = "https://cas.myorganization.com/login"

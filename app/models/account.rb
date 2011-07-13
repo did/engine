@@ -6,7 +6,7 @@ class Account
 
   # devise modules
   # devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable, :encryptable, :encryptor => :sha1
-  devise :cas_authenticatable
+  devise :cas_authenticatable, :rememberable, :trackable
 
   ## attributes ##
   field :name
@@ -39,6 +39,26 @@ class Account
 
   def self.find_using_switch_site_token!(token, age = 1.minute)
     self.find_using_switch_site_token(token, age) || raise(Mongoid::Errors::DocumentNotFound.new(self, token))
+  end
+
+  def cas_extra_attributes=(extra_attributes)
+    first_name = last_name = nil
+    extra_attributes.each do |name, value|
+      case name.to_sym
+      when :ido_id
+        puts "ido_id = #{value.inspect}"
+        # self.ido_id = value
+        save
+      when :first_name
+        first_name = value
+      when :last_name
+        last_name = value
+      end
+    end
+
+    self.name = "#{first_name} #{last_name}"
+
+    puts "self.name = #{self.name.inspect}"
   end
 
   protected

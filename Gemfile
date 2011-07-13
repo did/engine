@@ -8,6 +8,7 @@ gem 'rails', '3.0.9'
 
 gem 'warden'
 gem 'devise', '1.3.4'
+gem 'devise_cas_authenticatable', :path => '../devise_cas_authenticatable'
 
 gem 'mongoid', '~> 2.0.2'
 gem 'bson_ext', '~> 1.3.0'

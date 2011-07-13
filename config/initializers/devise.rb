@@ -193,4 +193,16 @@ Devise.setup do |config|
   #   manager.intercept_401 = false
   #   manager.default_strategies(:scope => :user).unshift :some_external_strategy
   # end
+
+  config.cas_base_url = 'https://auth.bushi.do/cas'
+
+  # you can override these if you need to, but cas_base_url is usually enough
+  # config.cas_login_url = "https://cas.myorganization.com/login"
+  # config.cas_logout_url = "https://cas.myorganization.com/logout"
+  # config.cas_validate_url = "https://cas.myorganization.com/serviceValidate"
+
+  # By default, devise_cas_authenticatable will create users.  If you would rather
+  # require user records to already exist locally before they can authenticate via
+  # CAS, uncomment the following line.
+  # config.cas_create_user = false
 end

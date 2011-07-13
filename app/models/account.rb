@@ -5,7 +5,8 @@ class Account
   include Locomotive::Mongoid::Document
 
   # devise modules
-  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable, :encryptable, :encryptor => :sha1
+  # devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable, :encryptable, :encryptor => :sha1
+  devise :cas_authenticatable
 
   ## attributes ##
   field :name

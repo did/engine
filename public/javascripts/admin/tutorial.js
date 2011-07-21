@@ -53,81 +53,143 @@ $(document).ready(function(){
       height: 100,
       title: ""
     });
-  
+    
+    var pagehook = (function(){
+      var possibles = ['ul.folder:first li', 
+                       'ul#pages-list li']; 
+      for(var i = 0; i<possibles.length; i++){
+        console.log("checking possibles", i, possibles[i]);
+        if($(possibles[i]).length > 0){
+          return possibles[i];
+        }
+      }
+    }());
+      
     guiders.createGuider({
-      attachTo: "ul.folder:first li",
-      buttons: [],
+      attachTo: pagehook,
+      buttons: [{name: "Quit", onclick: guiders.hideAll},
+                {name: "Next - Edit "+$(pagehook+' a:first').text()+"", onclick: function(){
+                  window.location = $(pagehook+' a:first').attr('href') + "#guider=editpagewelcome"
+                }
+              }],
       description: "These are pages. You can click on the page name to edit it.",
       id: "pagepointer",
       next: "editpagewelcome",
       width: 200,
       position: 9,
+      overlay: true,
       title: ""
     });
     
     guiders.createGuider({
       attachTo: "undefined",
       description: "A page is a collection of content on your site that can be reached at a web address <br /></br>\
-      For this example we will edit the '"+$('ul.folder:first li a:first').text()+"' page. To do that you would click on the page name.",
+      For this example we will edit the '"+$(pagehook+' a:first').text()+"' page. To do that you would click on the page name.",
       buttons: [{name: "Quit", onclick: guiders.hideAll},
-                {name: "Next - Edit "+$('ul.folder:first li a:first').text()+"", onclick: function(){
-                  window.location = $('ul.folder:first li a:first').attr('href') + "#guider=editpagewelcome"
-                }
-              }],
+                {name: "Next"}],
       id: "pagewelcome",
-      next: "editpagewelcome",
+      next: "pagepointer",
       overlay: true,
-      title: "What is a page?",
-      onShow: function(){
-        guiders.show('pagepointer')
-      }
+      title: "What is a page?"// ,
+      //       onShow: function(){
+      //         guiders.show('pagepointer')
+      //       }
     });
     
     guiders.createGuider({
-      attachTo: 'li.hoverable:last',
-      buttons: [],
-      description: "These are models.<br /> You can hover over to edit them.",
+      attachTo: 'li.hoverable:eq(2)',
+      buttons: [{name: "Quit", onclick: guiders.hideAll},
+                {name: "Next - Edit an Event",
+                            onclick: function(){
+                             window.location = $('li.hoverable:eq(2) li:first a').attr('href') + "#guider=editmodelwelcome";  
+                            }}],
+      description: "These are models.<br /> You can hover over to edit them. For this next section of the guide. We will edit an Event model. '"+$('.inner:eq(3) li:first a').text()+"' ",
       id: "modelpointer",
       next: "editpagewelcome",
       width: 240,
-      position: 3,
+      position: 4,
       title: ""
     });
     
     guiders.createGuider({
       attachTo: 'div.action span',
       buttons: [],
-      description: "You can click here to make a new model",
+      description: "Click here to make a new model",
       id: "newmodelpointer",
       next: "editpagewelcome",
       position: 6,
+      overlay: true,
       width: 200,
       title: ""
     });
     
     guiders.createGuider({
+      attachTo: 'div.action span',
+      buttons: [],
+      description: "Click here to make a new model",
+      id: "newmodelpointer-next",
+      next: "editpagewelcome",
+      position: 6,
+      width: 200,
+      title: "",
+      onShow: function(){
+        console.log("updating new model url");
+        $('div.action a').attr('href',
+        $('div.action a').attr('href') + "#guider=newmodelwelcome");
+      }
+    });
+    
+        
+    guiders.createGuider({
       attachTo: "undefined",
-      description: "What is a model?<br />\
-      The concept of a model within locomotiveCMS is a peice of content that you might reuse through out your site.\
-      Some example models could be: Blog posts, Products, Events, Locations, Photos<br /></br />\
-      For this next section of the guide. We will edit our Event model. '"+$('.inner:eq(3) li:first a').text()+"' ",
+      description: (function(){
+        var ret = "What is a model?<br />\
+        The concept of a model within locomotiveCMS is a peice of content that you might reuse through out your site.\
+        Some example models could be: Blog posts, Products, Events, Locations, Photos<br /></br />"
+        
+        if($('li.hoverable').length > 1){
+          ret += "For this next section of the guide. We will edit our Event model. '"+$('.inner:eq(3) li:first a').text()+"' ";
+        }else{
+          ret += "For this next section of the guide, lets make a new model";
+        }
+        
+        return ret;
+      }()),
       buttons: [{name: "Quit", onclick: guiders.hideAll},
-                {name: "Next - Edit an Event", onclick: function(){
-                  /*
-                  *
-                  * This is really britle 
-                  *
-                  */
-                  window.location = $('.inner:eq(3) li:first a').attr('href') + "#guider=editmodelwelcome";
-                }}],
+                {name: "Next"}],
+                // (function(){
+                //                   if($('li.hoverable').length < 1){
+                //                     return {
+                //                       name: "Next - Create a Model",
+                //                       onclick: function(){
+                //                         guiders.hideAll();
+                //                         guiders.show('newmodelpointer-next');
+                //                       }
+                //                     };
+                //                   }else{
+                //                     return  {
+                //                       name: "Next - Edit an Event",
+                //                       onclick: function(){
+                //                        window.location = $('li.hoverable:eq(2) li:first a').attr('href') + "#guider=editmodelwelcome";  
+                //                       }
+                //                     };
+                //                   }
+                //                 }())],
       id: "modelwelcome",
-      next: "newmodel",
+      next: (function(){
+        if($('li.hoverable').length > 1){
+          return "modelpointer";
+        }
+          return 'newmodelpointer';
+      }()),
       overlay: true,
       title: "Lets talk about Models...",
-      onShow: function(){
-        guiders.show("modelpointer");
-        guiders.show('newmodelpointer');
-      }
+      // onShow: function(){
+      //   if($('li.hoverable').length > 1){
+      //     guiders.show("modelpointer");
+      //   }
+      //   //guiders.show('newmodelpointer');
+      // }
     });
     
     guiders.createGuider({
@@ -157,13 +219,32 @@ $(document).ready(function(){
   
   }
   
-  
   /*
   *
   * /admin/pages/edit 
   *
   */
   if(window.location.pathname.match('admin/pages/.+\/edit') != null){
+    
+    // /*
+    // * We have to delay the creation of this guider
+    // * so TinyMCE can render it
+    // */
+    // window.onload = function(){
+    //   window.setTimeout(function(){
+    //     guiders.createGuider({
+    //       attachTo: '#page_editable_elements_attributes_1_content_ifr',
+    //       title: "Edit the content of the page",
+    //       description: "You can edit the content of your page in this text box. Go Ahead, add somethign like 'locomotiveCMS rocks!'. We'll wait for you.",
+    //       buttons: [],
+    //       id: "pageeditcontent",
+    //       next: "savepageedit",
+    //       position: 9,
+    //       width: 300
+    //     });
+    //   }, 2000);
+    // };
+    
     guiders.createGuider({
       attachTo: "undefined",
       description:     "You are now editing the '"+$('a.editable:first').text()+"' page. Lets start by changing the title of this page.",
@@ -174,7 +255,10 @@ $(document).ready(function(){
       overlay: true,
       title: "Editing A Page"
     });
-  
+    
+    
+    var page_title = 'Guide Demo Page';
+    
     guiders.createGuider({
       attachTo: "a.editable:first",
       buttons: [],
@@ -184,7 +268,7 @@ $(document).ready(function(){
       position: 6,
       width: 200,
       height: 100,
-      description: "Click here to edit the page title"
+      description: "Click here to edit the page title. <br /><br /> Change the title to '"+page_title+"'"
     });
     
     guiders.createGuider({
@@ -193,26 +277,16 @@ $(document).ready(function(){
       buttons: [{name: "Quit", onclick: guiders.hideAll},
                 {name: "Next"}],
       id: "greatjob",
-      next: "savepageedit",
+      next: "pageeditcontent",
       overlay: true,
       title: "Great Job!"
     });  
     
-    // guiders.createGuider({
-    //   attachTo: "li.text:first label",
-    //   description: "You can edit the content of your page in this text box",
-    //   id: "pageeditcontent",
-    //   next: "savepageedit",
-    //   position: 6,
-    //   title: "Edit the content of the page"
-    // });
-  
     guiders.createGuider({
       buttons: [],
       attachTo: "button.light:last",
-      description: "Click this update button to save any changes you've made to the page.",
+      description: "Click this save button to save any changes you've made to the page.",
       id: "savepageedit",
-      next: "help",
       position: 12,
       title: "Save Your Work",
       onShow: function(){
@@ -232,10 +306,22 @@ $(document).ready(function(){
       title: "Page Saved Successfully!"
     });
     
+    function viewSiteClick(e){
+      console.log("viewsite click!");
+      var $this = $(e.target);
+      e.preventDefault();
+      window.open($this.attr('href'),"_blank");
+      $this.attr('href', '#');
+      guiders.next();
+      $this.unbind('click', viewSiteClick);
+      return false;
+      //should probably unbind this to prevent double clicking
+    }
+    
     guiders.createGuider({
       attachTo: "#viewsite_ele",
       buttons: [],
-      description: "This will open a new tab in your browser and take you to the 'frontend' of your site. The frontend is what other visitors to your sit will see. Come back to this tab in your browser to continue the guide.",
+      description: "This will open a new tab in your browser and take you to the 'frontend' of your site. The frontend is what other visitors to your site will see. Come back to this tab in your browser to continue the guide.",
       id: "viewsite2",
       next: "editfinish",
       position: 6,
@@ -243,11 +329,7 @@ $(document).ready(function(){
       title: "Click Here To View Your Site",
       onShow: function(){
         console.log("binding click for view site", $('#viewsite_ele'));
-        $('#viewsite_ele').bind('click', function(){
-          console.log("viewsite click!");
-          guiders.next();
-          //should probably unbind this to prevent double clicking
-        });
+        $('#viewsite_ele').bind('click', viewSiteClick);
       }
     });
     
@@ -263,6 +345,74 @@ $(document).ready(function(){
       title: "Done editing."
     });
   
+  }
+  
+  /*
+  *
+  * New model
+  *
+  */
+  if(window.location.pathname.match('admin/content_types/new') != null ||
+     window.location.pathname.match('admin/content_types/.+/edit')){
+      
+      guiders.createGuider({
+        attachTo: "undefined",
+        description: "A model is how you define the content on your site. Lots of sites have: Blog Posts, Products, Photo Albums, Events.\
+        These are all differnt models.<br /><br />\
+        Models have fields. Fields are properties of a model. For example a Blog Post, has fields of: Author, Title, Content.<br /></br/>\
+        Try creating your own model and saving it!",
+        buttons: [{name: "Quit", onclick: guiders.hideAll},
+                  {name: "Next"}],
+        id: "newmodelwelcome",
+        next: "createmodel",
+        overlay: true,
+        title: "Lets create a new model!"
+      }); 
+      
+      guiders.createGuider({
+        buttons: [],
+        attachTo: "button.light:first",
+        description: "Click this button to create your new model!",
+        id: "createmodel",
+        next: "help",
+        position: 9,
+        title: "Save Your Work",
+        onShow: function(){
+          $('#new_content_type').attr('action', 
+          $('#new_content_type').attr('action')+"#guider=newmodelsuccess");
+        }
+      });
+      
+      guiders.createGuider({
+        attachTo: "undefined",
+        description: (function(){ 
+          if($('.inline-errors').length > 0){
+              return "Looks like you forgot something. Please Check out the errors and try again!";
+            }else{
+              return "You've Successfully created a model! Moving on. Lets adjust the settings of your LocomotiveCMS";
+            } 
+        }),
+        buttons: [{name: "Quit", onclick: guiders.hideAll},
+                  {name: "Next - Settings", onclick: function(){
+                    window.location = "/admin/pages#guider=settingswelcome";
+                  }}],
+        id: "newmodelsuccess",
+        next: "editsubdomain",
+        overlay: true,
+        title: (function(){ 
+          if($('.inline-errors').length > 0){
+              return "Uh oh.";
+            }else{
+              return "Great Work! You Made A New Model.";
+            } 
+        }),
+        onShow: (function(){ 
+          if($('.inline-errors').length > 0){
+              guiders.show('createmodel');
+            }
+        })
+      });
+      
   }
   
   /*
@@ -319,8 +469,6 @@ $(document).ready(function(){
   */
   if(window.location.pathname.match("admin/current_site/edit") != null){
     
-    
-    
     guiders.createGuider({
       attachTo: "undefined",
       description: "Welcome to the Settings page. Here you can create new user accounts to use LocomotiveCMS, Edit SEO options, and more. We will start by changing the subomain of our site.",
@@ -356,19 +504,26 @@ $(document).ready(function(){
       title: "Save Your Work",
       onShow: function(){
         $('form.save-with-shortcut').attr('action', 
-        $('form.save-with-shortcut').attr('action')+"#guider=modelsavesuccess");
+        $('form.save-with-shortcut').attr('action')+"#guider=settingssavesuccess");
       }
     });
     
     guiders.createGuider({
       attachTo: "undefined",
-      description: "You've Successfully updated your LocomotiveCMS settings",
+      title: "Great Work!",
+      description: "You've Successfully updated your LocomotiveCMS settings. Dosen't that feel awesome?",
       buttons: [{name: "Quit", onclick: guiders.hideAll},
-                {name: "Next"}],
+                {name: "Next", onclick: function(){
+                  if($('#bushi_banner').length > 0){
+                    guiders.hideAll();
+                    guiders.show("bushi_banner_guide");
+                  }else{
+                    guiders.hideAll();
+                    guiders.show("congratulations");
+                  }
+                }}],
       id: "settingssavesuccess",
-      next: "editsubdomain",
-      overlay: true,
-      title: "Great Work!"
+       overlay: true
     });
   }
   
@@ -382,11 +537,11 @@ $(document).ready(function(){
     attachTo: "#help",
     buttons: [{name: "Quit", onclick: guiders.hideAll}],
     description: "How To:<ul>\
-    <li><a id='newpage' class='tutorial' href=\"/admin/pages#guider=newpage\">Make a new Page</a></li>\
-    <li><a id='viewsite' class='tutorial' href=\"\">View Your Site</a></li>\
-    <li><a id='pagewelcome' class='tutorial' href=\"\">Edit A Page</a></li>\
-    <li><a id='modelwelcome' class='tutorial' href=\"\">Edit a a Content instance</a></li>\
-    <li><a id='settingswelcome' class='tutorial' href=\"\">Edit your site's settings</a></li></ul>",
+    <li><a id='newpage' class='tutorial' href=\"/admin/pages\">Make a new Page</a></li>\
+    <li><a id='viewsite' class='tutorial' href=\"#\">View Your Site</a></li>\
+    <li><a id='pagewelcome' class='tutorial' href=\"/admin/pages\">Edit A Page</a></li>\
+    <li><a id='modelwelcome' class='tutorial' href=\"/admin/pages\">Edit a a Content instance</a></li>\
+    <li><a id='settingseditwelcome' class='tutorial' href=\"/admin/current_site/edit\">Edit your site's settings</a></li></ul>",
     id: "help",
     position: 6,
     width: 200,
@@ -394,8 +549,14 @@ $(document).ready(function(){
   });
   
   $(".tutorial").click(function(){
+    var $this = $(this);
     guiders.hideAll();
-    guiders.show($(this).attr('id'));
+    if($this.attr('href') != '#'){
+      window.location = $this.attr('href') + "#guider=" + $this.attr('id');
+      window.location.refresh;
+    }else{
+      guiders.show($this.attr('id'));
+    }
     return false;
   });
   
@@ -413,12 +574,27 @@ $(document).ready(function(){
     attachTo: "undefined",
     description: "You've gone through the LocomotiveCMS guide! For more info on LocomotiveCMS,\
     checkout out <a href='http://www.locomotivecms.com/support/'>The LocomotiveCMS support pages</a>",
-    buttons: [{name: "Finished!", onclick: guiders.hideAll}],
+    buttons:[{name: "Finished!", onclick: guiders.hideAll}],
     id: "congratulations",
+    next: "bushi_banner",
     overlay: true,
     title: "Congratulations!"
   });
   
-  
+  window.onload = function(){
+    window.setTimeout(function(){
+      guiders.createGuider({
+        attachTo: "#bushi_banner",
+        description: "You may have noticed the bar at the top of your site. Its provided by Bushido. Bushido are friends of LocomotiveCMS. They are our official hosting partner.\
+        <br /><br /> They will keep your LocomotiveCMS site up and running. If you want to keep your LocomotiveCMS site, they have a short signup processes above. Check it out!",
+        buttons: [{name: "Next"}],
+        id: "bushi_banner_guide",
+        overlay: true,
+        title: "One more Thing...",
+        next: "congratulations",
+        position: 6
+      });
+    }, 1000);
+  };
   
 });

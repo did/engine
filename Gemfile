@@ -39,6 +39,7 @@ gem 'delayed_job_mongoid', '1.0.2'
 gem 'rubyzip'
 gem 'locomotive_jammit-s3', :require => 'jammit-s3'
 gem 'SystemTimer', :platforms => :ruby_18
+gem 'cells'
 
 # The rest of the dependencies are for use when in the locomotive dev environment
 

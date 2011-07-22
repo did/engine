@@ -22,15 +22,19 @@ module Locomotive
         module ClassMethods
 
           def bushido_app_claimed?
-            ENV['BUSHIDO_CLAIMED'].present? && ENV['BUSHIDO_CLAIMED'].to_s.downcase == 'true'
+            ENV['BUSHIDO_CLAIMED'].present? && Boolean.set(ENV['BUSHIDO_CLAIMED'])
           end
 
           def enable_bushido!
             self.config.domain = ENV['APP_TLD'] unless self.config.multi_sites?
 
+            self.config.devise_modules = [:cas_authenticatable, :rememberable, :trackable]
+
             self.enhance_models
 
             self.disable_authentication_for_not_claimed_app
+
+            self.setup_cas_client
 
             self.setup_smtp_settings
 
@@ -50,6 +54,19 @@ module Locomotive
 
           def disable_authentication_for_not_claimed_app
             Admin::BaseController.send :include, Locomotive::Hosting::Bushido::Devise
+          end
+
+          def setup_cas_client
+            ::Devise.setup do |config|
+              config.cas_base_url = 'https://auth.bushi.do/cas'
+              config.cas_logout_url = 'https://auth.bushi.do/cas/logout'
+            end
+
+            Admin::SessionsController.class_eval do
+              def new
+                redirect_to admin_pages_url
+              end
+            end
           end
 
           def setup_smtp_settings

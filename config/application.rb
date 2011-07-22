@@ -45,5 +45,14 @@ module Locomotive
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters << :password
+
+    # FIXME: for development purpose
+    # config.bushido_stub_env = {
+    #   'APP_TLD'               => 'bushi.do',
+    #   'BUSHIDO_APP'           => 'san_francisco',
+    #   'BUSHIDO_HOST'          => 'bushi.do',
+    #   'LOCOMOTIVE_SITE_NAME'  => 'Locomotive TEST',
+    #   'BUSHIDO_CLAIMED'       => 'true'
+    # }
   end
 end

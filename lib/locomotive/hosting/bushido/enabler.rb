@@ -40,10 +40,24 @@ module Locomotive
 
             self.add_middlewares
 
+            self.tweak_ui
+
             self.config.delayed_job = true # force to use delayed_job
 
             self.bushido_domains = ::Bushido::App.domains
             self.bushido_subdomain = ::Bushido::App.subdomain
+          end
+
+          def tweak_ui
+            edit_account_url = 'https://auth.bushi.do/users/edit'
+
+            ::Admin::GlobalActionsCell.update_for(:bushido) do |menu|
+              menu.modify :welcome, :url => edit_account_url
+            end
+
+            ::Admin::SettingsMenuCell.update_for(:bushido) do |menu|
+              menu.modify :account, :url => edit_account_url
+            end
           end
 
           def enhance_models

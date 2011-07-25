@@ -16,7 +16,7 @@ module Locomotive
 
     # Add additional load paths for your own custom dirs
     # config.load_paths += %W( #{config.root}/extras )
-    config.autoload_paths += %W( #{config.root}/app/models/extensions #{config.root}/app/models/extensions/site #{config.root}/app/models/extensions/page #{config.root}/app/models/extensions/asset)
+    config.autoload_paths += %W( #{config.root}/app/models/extensions #{config.root}/app/models/extensions/site #{config.root}/app/models/extensions/page #{config.root}/app/models/extensions/asset #{config.root}/app/cells/admin)
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named
@@ -45,14 +45,5 @@ module Locomotive
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters << :password
-
-    # FIXME: for development purpose
-    # config.bushido_stub_env = {
-    #   'APP_TLD'               => 'bushi.do',
-    #   'BUSHIDO_APP'           => 'san_francisco',
-    #   'BUSHIDO_HOST'          => 'bushi.do',
-    #   'LOCOMOTIVE_SITE_NAME'  => 'Locomotive TEST',
-    #   'BUSHIDO_CLAIMED'       => 'true'
-    # }
   end
 end

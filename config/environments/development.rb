@@ -5,7 +5,7 @@ Locomotive::Application.configure do
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
   # config.cache_classes = false
-  config.cache_classes = true # FIXME: for development purpose
+  config.cache_classes = true
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -31,12 +31,12 @@ Locomotive::Application.configure do
 
   # set up the bushido stub (uncomment it)
   # config.bushido_stub_env = false
-  # config.bushido_stub_env = {
-  #   'APP_TLD'               => 'bushi.do',
-  #   'BUSHIDO_APP'           => 'san_francisco',
-  #   'BUSHIDO_HOST'          => 'bushi.do',
-  #   'LOCOMOTIVE_SITE_NAME'  => 'Locomotive TEST',
-  #   'BUSHIDO_CLAIMED'       => 'true',
-  #   'BUSHIDO_METRICS_TOKEN' => 'foobar'
-  # }
+  config.bushido_stub_env = {
+    'APP_TLD'               => 'bushi.do',
+    'BUSHIDO_APP'           => 'san_francisco',
+    'BUSHIDO_HOST'          => 'bushi.do',
+    'LOCOMOTIVE_SITE_NAME'  => 'Locomotive TEST',
+    'BUSHIDO_CLAIMED'       => 'true',
+    'BUSHIDO_METRICS_TOKEN' => 'foobar'
+  }
 end
